@@ -76,12 +76,7 @@ def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC):
     return np.array(img_resized)
 
 
-def predict_drawings(img_):
-    # Open image and convert to array ranging from 0-255
-    pil_image = Image.fromarray(img_, mode='RGBA')
-    gray_img = ImageOps.grayscale(pil_image)
-    img_array = np.array(gray_img)
-
+def crop_canvas_digits(img_array):
     # Apply thresholding to convert the grayscale image to a binary image
     _, thresh = cv2.threshold(img_array, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
@@ -92,13 +87,20 @@ def predict_drawings(img_):
     digits = []
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        # if w >= 10 and h >= 20 and w / h >= 0.5:
-        # TODO: change resize to maintaing aspect ratio
         digit = thresh[y:y + h, x:x + w]
         resized_digit = resize_image(digit, (28, 28))
         digits.append(resized_digit)
 
-    digits = np.array(digits)
+    return np.array(digits)
+
+
+def predict_drawings(img_):
+    # Open image and convert to array ranging from 0-255
+    pil_image = Image.fromarray(img_, mode='RGBA')
+    gray_img = ImageOps.grayscale(pil_image)
+    img_array = np.array(gray_img)
+
+    digits = crop_canvas_digits(img_array)
 
     model = tf.keras.models.load_model('models/mnist_keras_model')
 
