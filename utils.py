@@ -34,7 +34,7 @@ def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_c
     #     n_rows = 1
     min_color = 0
     max_color = 255
-    fig = plt.figure(figsize=(1.2* n_cols, 1.2*n_rows))
+    fig = plt.figure(figsize=(1.2 * n_cols, 1.2*n_rows))
     if title:
         plt.suptitle(title, weight='bold', size=18)
     for col in range(n_cols):
@@ -64,6 +64,18 @@ def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_c
     return fig
 
 
+def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC):
+    pil_image = Image.fromarray(img_array)
+
+    wpercent = (shape[1] / float(pil_image.size[0]))
+    hsize = int((float(pil_image.size[1]) * float(wpercent)))
+    img = pil_image.resize((shape[1], hsize), resample=resample)
+
+    img_resized = ImageOps.pad(img, size=shape, color=0, method=resample)
+
+    return np.array(img_resized)
+
+
 def predict_drawings(img_):
     # Open image and convert to array ranging from 0-255
     pil_image = Image.fromarray(img_, mode='RGBA')
@@ -83,8 +95,8 @@ def predict_drawings(img_):
         # if w >= 10 and h >= 20 and w / h >= 0.5:
         # TODO: change resize to maintaing aspect ratio
         digit = thresh[y:y + h, x:x + w]
-        digit = cv2.resize(digit, (28, 28))
-        digits.append(digit)
+        resized_digit = resize_image(digit, (28, 28))
+        digits.append(resized_digit)
 
     digits = np.array(digits)
 
