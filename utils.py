@@ -2,12 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
 import cv2
+import os
 import tensorflow as tf
 from time import strftime
 
 
 def save_png(img_):
     img = Image.fromarray(img_, mode='RGBA')
+    if not os.path.isdir('./img'):
+        os.makedirs('./img')
     img.save('./img/img_' + strftime("run_%Y_%m_%d_%H_%M_%S") + '.png')
 
 
