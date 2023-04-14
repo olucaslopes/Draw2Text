@@ -105,7 +105,7 @@ def predict_drawings(img_):
 
     digits = crop_canvas_digits(img_array)
 
-    model = tf.keras.models.load_model('models/mnist_keras_model')
+    model = tf.keras.models.load_model('models/mnist_keras_model.h5')
 
     predicted_labels = np.argmax(model.predict(digits), axis=1)
 
