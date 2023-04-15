@@ -5,6 +5,7 @@ import cv2
 import os
 import tensorflow as tf
 from time import strftime
+from exceptions import DigitNotFoundError
 
 
 def save_png(img_):
@@ -98,12 +99,22 @@ def crop_canvas_digits(img_array):
 
 
 def predict_drawings(img_):
-    # Open image and convert to array ranging from 0-255
-    pil_image = Image.fromarray(img_, mode='RGBA')
-    gray_img = ImageOps.grayscale(pil_image)
-    img_array = np.array(gray_img)
+    if isinstance(img_, np.ndarray):
+        if len(img_.shape) == 3:
+            # Open image and convert to array ranging from 0-255
+            pil_image = Image.fromarray(img_, mode='RGBA')
+            gray_img = ImageOps.grayscale(pil_image)
+            img_array = np.array(gray_img)
+        else:
+            pass
+    else:
+        raise ValueError('img_ must be an array')
 
     digits = crop_canvas_digits(img_array)
+
+    if len(digits) == 0:
+        raise DigitNotFoundError("Couldn't find any digit")
+
     digits_array = [np.array(d) for d in digits]
 
     model = tf.keras.models.load_model('models/mnist_keras_model.h5')

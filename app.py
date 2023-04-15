@@ -1,9 +1,10 @@
-import pandas as pd
 import streamlit as st
 from itertools import cycle
 from streamlit_drawable_canvas import st_canvas
 from utils import predict_drawings, save_png
-from PIL import ImageOps
+from PIL import Image, ImageOps
+import numpy as np
+from exceptions import DigitNotFoundError
 
 
 st.set_page_config(
@@ -32,31 +33,42 @@ canvas_result = st_canvas(
     key="canvas",
 )
 
-colc1, colc2, colc3 = st.columns([2 ,3, 3])
+if canvas_result.image_data is not None:
+    pil_image = Image.fromarray(canvas_result.image_data, mode='RGBA')
+    gray_img = ImageOps.grayscale(pil_image)
+    img_array = np.array(gray_img)
+    if np.all(img_array == 238):
+        empty_canvas = True
+    else:
+        empty_canvas = False
+else:
+    empty_canvas = True
+
+colc1, colc2, colc3 = st.columns([2, 3, 3])
 
 colc1.text('\n')
 colc1.text('\n')
-predict_button = colc1.button('Predict Digits')
+predict_button = colc1.button('Predict Digits', disabled=empty_canvas)
 
 stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
 
 colc3.empty()
 
 
-if predict_button:
-    save_png(canvas_result.image_data)
+if predict_button and not empty_canvas:
 
-    # with open('current_image_array.npy', 'wb') as f:
-    #     np.save(f, canvas_result.image_data)
+    try:
+        digits, predicted_labels = predict_drawings(canvas_result.image_data)
+    except DigitNotFoundError:
+        pass
+    else:
+        save_png(canvas_result.image_data)
+        st.markdown('#### Founded Digits:')
 
-    st.markdown('#### Founded Digits:')
-
-    digits, predicted_labels = predict_drawings(canvas_result.image_data)
-
-    caption = [f'predicted={p}' for p in predicted_labels]
-    cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
-    for idx, filteredImage in enumerate(digits):
-        current_col = next(cols)
-        digits[0].save('test.png')
-        current_col.image(ImageOps.invert(filteredImage), width=100)
-        current_col.text(caption[idx])
+        caption = [f'predicted={p}' for p in predicted_labels]
+        cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
+        for idx, filteredImage in enumerate(digits):
+            current_col = next(cols)
+            digits[0].save('test.png')
+            current_col.image(ImageOps.invert(filteredImage), width=100)
+            current_col.text(caption[idx])
