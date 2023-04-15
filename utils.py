@@ -68,7 +68,7 @@ def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_c
 
 
 def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC):
-    pil_image = Image.fromarray(img_array)
+    pil_image = Image.fromarray(img_array, mode='L')
 
     wpercent = (shape[1] / float(pil_image.size[0]))
     hsize = int((float(pil_image.size[1]) * float(wpercent)))
@@ -76,7 +76,7 @@ def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC):
 
     img_resized = ImageOps.pad(img, size=shape, color=0, method=resample)
 
-    return np.array(img_resized)
+    return img_resized
 
 
 def crop_canvas_digits(img_array):
@@ -94,7 +94,7 @@ def crop_canvas_digits(img_array):
         resized_digit = resize_image(digit, (28, 28))
         digits.append(resized_digit)
 
-    return np.array(digits)
+    return digits
 
 
 def predict_drawings(img_):
@@ -104,9 +104,10 @@ def predict_drawings(img_):
     img_array = np.array(gray_img)
 
     digits = crop_canvas_digits(img_array)
+    digits_array = [np.array(d) for d in digits]
 
     model = tf.keras.models.load_model('models/mnist_keras_model.h5')
 
-    predicted_labels = np.argmax(model.predict(digits), axis=1)
+    predicted_labels = np.argmax(model.predict(np.array(digits_array)), axis=1)
 
-    return plot_numbers(digits, predicted_label=predicted_labels)
+    return digits, predicted_labels
