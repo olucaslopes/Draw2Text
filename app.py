@@ -1,7 +1,6 @@
 import streamlit as st
 from itertools import cycle
 from streamlit_drawable_canvas import st_canvas
-import streamlit_toggle as tog
 from utils import predict_drawings, save_png
 from PIL import Image, ImageOps
 import numpy as np
@@ -54,7 +53,7 @@ colc1, colc2, colc3 = st.columns([2, 3, 3])
 
 colc1.text('\n')
 colc1.text('\n')
-predict_button = colc1.button('Predict Digits', disabled=empty_canvas)
+predict_button = colc1.button('Predict Digits', disabled=empty_canvas, type='primary')
 
 stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
 
@@ -73,11 +72,18 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
         save_png(canvas_result.image_data)
         st.markdown('#### Found digits:')
 
-        tog.st_toggle_switch(label='Edit mode')
+        edit_mode = st.checkbox('Enable label correction')
+
         caption = [f'predicted={p}' for p in predicted_labels]
-        cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
-        for idx, filteredImage in enumerate(digits):
-            current_col = next(cols)
-            digits[0].save('test.png')
-            current_col.image(ImageOps.invert(filteredImage), width=100)
-            current_col.text(caption[idx])
+
+        if edit_mode:
+            for idx, filteredImage in enumerate(digits):
+                cols = st.columns(5)
+                cols[1].image(ImageOps.invert(filteredImage), width=100, caption=caption[idx])
+                cols[2].number_input(label='Select the true label', min_value=0, max_value=9, step=1, key=idx)
+            st.button('Send')
+        else:
+            cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
+            for idx, filteredImage in enumerate(digits):
+                current_col = next(cols)
+                current_col.image(ImageOps.invert(filteredImage), width=100, caption=caption[idx])
