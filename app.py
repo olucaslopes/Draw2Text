@@ -1,6 +1,7 @@
 import streamlit as st
 from itertools import cycle
 from streamlit_drawable_canvas import st_canvas
+import streamlit_toggle as tog
 from utils import predict_drawings, save_png
 from PIL import Image, ImageOps
 import numpy as np
@@ -21,6 +22,9 @@ numbers and letters in drawing sketches
 
 stroke_slider = 3
 
+if 'pressed_predict_button' not in st.session_state:
+    st.session_state.pressed_predict_button = False
+
 # Create a canvas component
 canvas_result = st_canvas(
     fill_color="rgba(255, 165, 0, 0.3)",  # Fixed fill color with some opacity
@@ -39,10 +43,12 @@ if canvas_result.image_data is not None:
     img_array = np.array(gray_img)
     if np.all(img_array == 238):
         empty_canvas = True
+        st.session_state.pressed_predict_button = False
     else:
         empty_canvas = False
 else:
     empty_canvas = True
+    st.session_state.pressed_predict_button = False
 
 colc1, colc2, colc3 = st.columns([2, 3, 3])
 
@@ -55,7 +61,9 @@ stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
 colc3.empty()
 
 
-if predict_button and not empty_canvas:
+if (predict_button and not empty_canvas) or st.session_state.pressed_predict_button:
+
+    st.session_state.pressed_predict_button = True
 
     try:
         digits, predicted_labels = predict_drawings(canvas_result.image_data)
@@ -63,8 +71,9 @@ if predict_button and not empty_canvas:
         pass
     else:
         save_png(canvas_result.image_data)
-        st.markdown('#### Founded Digits:')
+        st.markdown('#### Found digits:')
 
+        tog.st_toggle_switch(label='Edit mode')
         caption = [f'predicted={p}' for p in predicted_labels]
         cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
         for idx, filteredImage in enumerate(digits):
