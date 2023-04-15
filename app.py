@@ -55,7 +55,7 @@ colc1.text('\n')
 colc1.text('\n')
 predict_button = colc1.button('Predict Digits', disabled=empty_canvas, type='primary')
 
-stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
+# stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
 
 colc3.empty()
 
@@ -72,7 +72,7 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
         save_png(canvas_result.image_data)
         st.markdown('#### Found digits:')
 
-        edit_mode = st.checkbox('Enable label correction')
+        edit_mode = st.checkbox('Toggle label editing')
 
         caption = [f'predicted={p}' for p in predicted_labels]
 
@@ -81,7 +81,11 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
                 cols = st.columns(5)
                 cols[1].image(ImageOps.invert(filteredImage), width=100, caption=caption[idx])
                 cols[2].number_input(label='Select the true label', min_value=0, max_value=9, step=1, key=idx)
-            st.button('Send')
+
+            feedback_completed = st.button('Send')
+
+            if feedback_completed:
+                st.success('Thanks for the feedback!', icon="✅")
         else:
             cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
             for idx, filteredImage in enumerate(digits):
