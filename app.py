@@ -65,7 +65,13 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
     st.session_state.pressed_predict_button = True
 
     try:
-        digits, predicted_labels = predict_drawings(canvas_result.image_data)
+        if predict_button:
+            digits, predicted_labels = predict_drawings(canvas_result.image_data)
+            st.session_state.digits = digits
+            st.session_state.predicted_labels = predicted_labels
+        else:
+            digits = st.session_state.digits
+            predicted_labels = st.session_state.predicted_labels
     except DigitNotFoundError:
         pass
     else:
