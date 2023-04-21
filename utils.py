@@ -68,16 +68,19 @@ def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_c
     return fig
 
 
-def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC):
+def resize_image(img_array, shape=(28, 28), resample=Image.BICUBIC, pad=2):
     pil_image = Image.fromarray(img_array, mode='L')
 
-    wpercent = (shape[1] / float(pil_image.size[0]))
+    drawable_shape = (shape[0] - pad * 2, shape[1] - pad * 2)
+    wpercent = (drawable_shape[1] / float(pil_image.size[0]))
     hsize = int((float(pil_image.size[1]) * float(wpercent)))
-    img = pil_image.resize((shape[1], hsize), resample=resample)
+    img = pil_image.resize((drawable_shape[1], hsize), resample=resample)
 
-    img_resized = ImageOps.pad(img, size=shape, color=0, method=resample)
+    img_resized = ImageOps.pad(img, size=drawable_shape, color=0, method=resample)
 
-    return img_resized
+    img_padded = ImageOps.expand(img_resized, border=pad)
+
+    return img_padded
 
 
 def crop_canvas_digits(img_array):
