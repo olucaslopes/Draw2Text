@@ -4,7 +4,7 @@ from PIL import Image, ImageOps
 import cv2
 import os
 import tensorflow as tf
-from time import strftime
+import hashlib
 from exceptions import DigitNotFoundError
 
 
@@ -12,7 +12,8 @@ def save_png(img_):
     img = Image.fromarray(img_, mode='RGBA')
     if not os.path.isdir('./img'):
         os.makedirs('./img')
-    img.save('./img/img_' + strftime("run_%Y_%m_%d_%H_%M_%S") + '.png')
+    img_hash = hashlib.md5(img.tobytes()).hexdigest()
+    img.save('./img/' + img_hash + '.png')
 
 
 def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_cols=10, title=''):
