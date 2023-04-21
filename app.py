@@ -77,10 +77,16 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
         caption = [f'predicted={p}' for p in predicted_labels]
 
         if edit_mode:
+            opt = [i for i in range(0, 10)] + ['Undefiable', ]
             for idx, filteredImage in enumerate(digits):
                 cols = st.columns(5)
                 cols[1].image(ImageOps.invert(filteredImage), width=100, caption=caption[idx])
-                cols[2].number_input(label='Select the true label', min_value=0, max_value=9, step=1, key=idx)
+                cols[2].selectbox(
+                    options=opt,
+                    index=10,
+                    label='Select the true label',
+                    key=f'y_true_{idx}'
+                )
 
             feedback_completed = st.button('Send')
 
