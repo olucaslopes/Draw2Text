@@ -14,7 +14,7 @@ st.set_page_config(
 st.markdown('''
 # 👁️ Draw2Text
 
-AI-powered drawing recognition app that uses advanced machine learning algorithms to detect\
+AI-powered drawing recognition app that uses advanced machine learning algorithms to detect \
 numbers and letters in drawing sketches
 
 ''')
@@ -51,8 +51,6 @@ else:
 
 colc1, colc2, colc3 = st.columns([2, 3, 3])
 
-colc1.text('\n')
-colc1.text('\n')
 predict_button = colc1.button('Predict Digits', disabled=empty_canvas, type='primary')
 
 # stroke_slider = colc2.slider("Stroke width: ", 1, 10, 3)
