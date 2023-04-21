@@ -171,7 +171,7 @@ def predict_drawings(img_):
 
     digits_array = [np.array(d) for d in digits]
 
-    model = tf.keras.models.load_model('models/mnist_keras_model.h5')
+    model = tf.keras.models.load_model('models/default_mnist_model.h5')
 
     predicted_labels = np.argmax(model.predict(np.array(digits_array)), axis=1)
 
