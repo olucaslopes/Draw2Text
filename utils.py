@@ -5,15 +5,65 @@ import cv2
 import os
 import tensorflow as tf
 import hashlib
+import cloudinary
+from cloudinary.uploader import upload
+import io
 from exceptions import DigitNotFoundError
+import streamlit as st
+
+CLOUD_UPLOAD = True
+# cloudinary_auth = dict()
+# cloudinary_auth['CLOUD_NAME'] = os.getenv('CLOUD_NAME')
+# cloudinary_auth['API_KEY'] = os.getenv('API_KEY')
+# cloudinary_auth['API_SECRET'] = os.getenv('API_SECRET')
+#
+# if CLOUD_UPLOAD and any([v is None for v in cloudinary_auth]):
+#     warnings.warn('Cloud upload was disabled because Cloudinary API keys not found')
+#     CLOUD_UPLOAD = False
+# else:
+#     # Config
+#     ...
 
 
 def save_png(img_):
     img = Image.fromarray(img_, mode='RGBA')
-    if not os.path.isdir('./img'):
-        os.makedirs('./img')
     img_hash = hashlib.md5(img.tobytes()).hexdigest()
-    img.save('./img/' + img_hash + '.png')
+    if CLOUD_UPLOAD:
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format='PNG')
+
+        img_byte_arr = img_byte_arr.getvalue()
+        cloudinary.config(
+            cloud_name=st.secrets.cloudinary.cloud_name,
+            api_key=st.secrets.cloudinary.api_key,
+            api_secret=st.secrets.cloudinary.api_secret,
+            secure=True
+        )
+        upload(img_byte_arr, public_id=f"draw2text/canvas/{img_hash}")
+    else:
+        if not os.path.isdir('./img'):
+            os.makedirs('./img')
+        img.save('./img/' + img_hash + '.png')
+
+
+def save_digit(img_, metadata):
+    img_hash = hashlib.md5(img_.tobytes()).hexdigest()
+    if CLOUD_UPLOAD:
+        img_byte_arr = io.BytesIO()
+        img_.save(img_byte_arr, format='PNG')
+
+        img_byte_arr = img_byte_arr.getvalue()
+        cloudinary.config(
+            cloud_name=st.secrets.cloudinary.cloud_name,
+            api_key=st.secrets.cloudinary.api_key,
+            api_secret=st.secrets.cloudinary.api_secret,
+            secure=True
+        )
+        upload(img_byte_arr, public_id=f"draw2text/digits/{img_hash}", context=metadata)
+    else:
+        if not os.path.isdir('./img'):
+            os.makedirs('./img')
+        img_.save('./img/' + img_hash + '.png')
 
 
 def plot_numbers(img_array, true_label=None, predicted_label=None, n_rows=3, n_cols=10, title=''):

@@ -1,7 +1,7 @@
 import streamlit as st
 from itertools import cycle
 from streamlit_drawable_canvas import st_canvas
-from utils import predict_drawings, save_png
+from utils import predict_drawings, save_digit
 from PIL import Image, ImageOps
 import numpy as np
 from exceptions import DigitNotFoundError
@@ -69,7 +69,7 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
     except DigitNotFoundError:
         pass
     else:
-        save_png(canvas_result.image_data)
+        # save_png(canvas_result.image_data)
         st.markdown('#### Found digits:')
 
         edit_mode = st.checkbox('Toggle label editing')
@@ -91,6 +91,12 @@ if (predict_button and not empty_canvas) or st.session_state.pressed_predict_but
             feedback_completed = st.button('Send')
 
             if feedback_completed:
+                for idx, d in enumerate(digits):
+                    save_digit(d,
+                               metadata={
+                                   'y_true': st.session_state[f'y_true_{idx}'],
+                                   'y_pred': predicted_labels[idx]}
+                               )
                 st.success('Thanks for the feedback!', icon="✅")
         else:
             cols = cycle(st.columns(5))  # st.columns here since it is out of beta at the time I'm writing this
