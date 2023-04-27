@@ -1,3 +1,4 @@
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
@@ -176,3 +177,9 @@ def predict_drawings(img_):
     predicted_labels = np.argmax(model.predict(np.array(digits_array)), axis=1)
 
     return digits, predicted_labels
+
+
+def get_accuracy_by_digit(y_true, y_pred):
+    df = pd.DataFrame({'y_pred': y_pred, 'y_true': y_true, 'right': y_pred == y_true})
+
+    return df.groupby('y_true')['right'].sum() / df.groupby('y_true')['right'].count()
