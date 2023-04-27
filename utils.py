@@ -25,6 +25,7 @@ CLOUD_UPLOAD = True
 #     # Config
 #     ...
 
+model = tf.keras.models.load_model('models/tuned-mnist.h5')
 
 def save_png(img_):
     img = Image.fromarray(img_, mode='RGBA')
@@ -171,8 +172,6 @@ def predict_drawings(img_):
         raise DigitNotFoundError("Couldn't find any digit")
 
     digits_array = [np.array(d) for d in digits]
-
-    model = tf.keras.models.load_model('models/tuned-mnist.h5')
 
     predicted_labels = np.argmax(model.predict(np.array(digits_array)), axis=1)
 
