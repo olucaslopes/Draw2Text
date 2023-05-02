@@ -1,4 +1,4 @@
-# Draw2Text
+# 👁 Draw2Text: AI-powered digit recognition app
 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://draw2text.streamlit.app/)
 
@@ -6,15 +6,15 @@
     <a href="https://energygenforecaster.streamlit.app/"><img src="img/Draw2Text-Demo.gif" width="50%" align="center"/></a>
 </p>
 
-AI-powered drawing recognition app that uses advanced machine learning algorithms to detect numbers and letters in drawing sketches
+Draw2Text is an innovative web application that recognizes numbers and letters drawn by users in the canvas. It uses advanced machine learning algorithms, including computer vision and deep learning, to segment the drawn image, predict the digit/letter label, and display the result to the user. The app also enables users to provide feedback, which can be used to fine-tune the model for better accuracy in future predictions.
 
 ## How it works
 
-1. The user draws a digit in the canvas provided by the app
-2. The app takes the image of the digit and uses OpenCV (an open source computer vision library) to segment it
-3. The segmented digit image is then passed to a neural network created with Keras
-4. The Keras model uses deep learning techniques to analyze the digit image and make a prediction of which digit it represents.
-5. The app displays the predicted digit label to the user and asks for feedback. The feedback can be used to tune the model for better accuracy in future predictions.
+1. The user draws a digit or letter on the provided canvas
+2. The app uses OpenCV, an open-source computer vision library, to segment the canvas in digits images
+3. The segmented image is then passed to a neural network created with Keras, which uses deep learning techniques to predict the digit label.
+4. The predicted label is then displayed to the user.
+5. The user can provide feedback to improve the model's accuracy in future predictions.
 
 ```mermaid
 
@@ -48,6 +48,17 @@ pip install -r requirements.txt
 ```
 streamlit run app.py
 ```
+
+## Technologies used
+- Cloudinary to Cloud Storage the drawn digits and user true labels feedback for future tuning
+- Streamlit for the front end
+- TensorFlow Keras for model development
+- Image Hashing to avoid duplicated images
+- OpenCV to image segmentation through contours
+- Pandas and Numpy for data manipulation
+
+## Model
+The app uses a TensorFlow Keras Multi Layer Perceptron (MLP) model to predict the digits drawn.
 
 ## Contact
 
