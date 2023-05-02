@@ -10,6 +10,12 @@ AI-powered drawing recognition app that uses advanced machine learning algorithm
 
 ## How it works
 
+1. The user draws a digit in the canvas provided by the app
+2. The app takes the image of the digit and uses OpenCV (an open source computer vision library) to segment it
+3. The segmented digit image is then passed to a neural network created with Keras
+4. The Keras model uses deep learning techniques to analyze the digit image and make a prediction of which digit it represents.
+5. The app displays the predicted digit label to the user and asks for feedback. The feedback can be used to tune the model for better accuracy in future predictions.
+
 ```mermaid
 
 graph TD
@@ -20,12 +26,6 @@ graph TD
     E --> F["User Feedback for Future Tuning"]
     F --> C
 ```
-
-1. The user draws a digit in the canvas provided by the app
-2. The app takes the image of the digit and uses OpenCV (an open source computer vision library) to segment it
-3. The segmented digit image is then passed to a neural network created with Keras
-4. The Keras model uses deep learning techniques to analyze the digit image and make a prediction of which digit it represents.
-5. The app displays the predicted digit label to the user and asks for feedback. The feedback can be used to tune the model for better accuracy in future predictions.
 
 ## Getting Started
 
