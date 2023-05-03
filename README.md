@@ -3,7 +3,7 @@
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://draw2text.streamlit.app/)
 
 <p align="center">
-    <a href="https://energygenforecaster.streamlit.app/"><img src="img/Draw2Text-Demo.gif" width="50%" align="center"/></a>
+    <a href="https://draw2text.streamlit.app/"><img src="img/Draw2Text-Demo.gif" width="50%" align="center"/></a>
 </p>
 
 Draw2Text is an innovative web application that recognizes numbers and letters drawn by users in the canvas. It uses advanced machine learning algorithms, including computer vision and deep learning, to segment the drawn image, predict the digit/letter label, and display the result to the user. The app also enables users to provide feedback, which can be used to fine-tune the model for better accuracy in future predictions.
